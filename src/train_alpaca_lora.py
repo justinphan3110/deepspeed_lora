@@ -12,7 +12,7 @@ from transformers import (
     set_seed,
 )
 
-from src.args import (
+from args import (
     ModelArguments,
     DataTrainingArguments,
     TrainingArguments
@@ -26,7 +26,7 @@ from peft import (
     set_peft_model_state_dict,
 )
 
-from src.alpaca_lora.dataset_utils import generate_alpaca_lora_dataset
+from alpaca_lora.dataset_utils import generate_alpaca_lora_dataset
 
 DEFAULT_PAD_TOKEN = "[PAD]"
 DEFAULT_EOS_TOKEN = "</s>"
@@ -155,7 +155,7 @@ def train():
     if torch.__version__ >= "2" and sys.platform != "win32":
         model = torch.compile(model)
 
-        
+
     trainer.train(resume_from_checkpoint=resume_from_checkpoint)
     trainer.save_pretrained(training_args.output_dir)
     

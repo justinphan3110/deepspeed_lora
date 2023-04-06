@@ -1,6 +1,6 @@
 #!/bin/bash
 
-source /opt/rh/devtoolset-7/enable
+source /opt/rh/devtoolset-10/enable
 export TRANSFORMERS_CACHE='hf_cache'
 export M=llama-7b
 export LR=3e-4

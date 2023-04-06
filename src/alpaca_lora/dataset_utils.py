@@ -1,4 +1,4 @@
-from src.alpaca_lora.prompter import Prompter 
+from prompter import Prompter 
 from datasets import load_dataset
 
 def tokenize(prompt, tokenizer, cutoff_len=512, add_eos_token=True):
