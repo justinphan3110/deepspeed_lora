@@ -10,16 +10,20 @@ from transformers import (
     AutoTokenizer,
     default_data_collator,
     set_seed,
+    DataCollatorForSeq2Seq,
+    GenerationConfig,
+    
 )
 
 from typing import Dict
 
-from .torchtracemalloc import TorchTracemalloc, b2mb
+from torchtracemalloc import TorchTracemalloc, b2mb
 from peft import LoraConfig, TaskType, get_peft_model, PeftModel
 import transformers
 from args import (
     ModelArguments,
     DataTrainingArguments,
+    TrainingArguments,
 )
 from alpaca_lora.dataset_utils import generate_alpaca_lora_dataset
 from alpaca_lora.prompter import Prompter
@@ -52,8 +56,8 @@ def smart_tokenizer_and_embedding_resize(
 
 set_seed(0)
 def main():
-    parser = transformers.HfArgumentParser((ModelArguments, DataTrainingArguments))
-    model_args, data_args = parser.parse_args_into_dataclasses()
+    parser = transformers.HfArgumentParser((ModelArguments, DataTrainingArguments, TrainingArguments))
+    model_args, data_args, _ = parser.parse_args_into_dataclasses()
     
     model_name = model_args.model_name_or_path
     adapter_name = model_args.adapter_name_or_path
@@ -63,7 +67,7 @@ def main():
     model = AutoModelForCausalLM.from_pretrained(
             model_name,
             # load_in_8bit=load_8bit,
-            torch_dtype=torch.float16,
+            # torch_dtype=torch.float16,
             # device_map="auto",
     )
 
@@ -72,7 +76,7 @@ def main():
         model = PeftModel.from_pretrained(
                 model,
                 adapter_name,
-                torch_dtype=torch.float16,
+                # torch_dtype=torch.float16,
         )
 
     tokenizer = AutoTokenizer.from_pretrained(model_name)
@@ -91,31 +95,47 @@ def main():
             }
         )
 
+
+
+    with accelerator.main_process_first():
+        processed_datasets, _ = generate_alpaca_lora_dataset(data_args, tokenizer, shuffle=False)
+    accelerator.wait_for_everyone()
+
+    batch_size = 8
+    data_collator = DataCollatorForSeq2Seq(tokenizer, model)
+    dataloader = DataLoader(
+        processed_datasets, shuffle=False, collate_fn=data_collator, batch_size=batch_size, pin_memory=True
+    )
+
+
+    model, dataloader = accelerator.prepare(
+        model, dataloader
+    )
+    accelerator.print(model)
     is_ds_zero_3 = False
     if getattr(accelerator.state, "deepspeed_plugin", None):
         is_ds_zero_3 = accelerator.state.deepspeed_plugin.zero_stage == 3
 
-    with accelerator.main_process_first():
-        processed_datasets, _ = generate_alpaca_lora_dataset(data_args, tokenizer)
-    accelerator.wait_for_everyone()
-
-    batch_size = 8
-    dataloader = DataLoader(
-        processed_datasets, shuffle=True, collate_fn=default_data_collator, batch_size=batch_size, pin_memory=True
-    )
 
     print("=====Sample data=====")
-    print(next(iter(dataloader)))
     prompter = Prompter()
     model.eval()
     test_preds = []
+
+
+    generation_config = GenerationConfig(
+        temperature=0.1,
+        top_p=0.75,
+        top_k=40,
+        num_beams=4,
+    )
 
     with TorchTracemalloc() as tracemalloc:
         for _, batch in enumerate(tqdm(dataloader)):
             batch = {k: v for k, v in batch.items() if k != "labels"}
             with torch.no_grad():
                 outputs = accelerator.unwrap_model(model).generate(
-                    **batch, synced_gpus=is_ds_zero_3, max_new_tokens=10
+                    **batch, synced_gpus=is_ds_zero_3, max_new_tokens=128, generation_config=generation_config
                 )  # synced_gpus=True for DS-stage 3
             outputs = accelerator.pad_across_processes(outputs, dim=1, pad_index=tokenizer.pad_token_id)
             preds = accelerator.gather(outputs)
@@ -134,7 +154,7 @@ def main():
         )
     )
 
-    print(test_preds)
+    print('\n'.join(test_preds))
     accelerator.wait_for_everyone()
 
 

@@ -52,7 +52,7 @@ def generate_and_tokenize_prompt(data_point, tokenizer, train_on_inputs=True, pr
     return tokenized_full_prompt
 
 
-def generate_alpaca_lora_dataset(data_args, tokenizer):
+def generate_alpaca_lora_dataset(data_args, tokenizer, shuffle=True):
     if data_args.train_file and (data_args.train_file.endswith(".json") or data_args.train_file.endswith(".jsonl")):
         data = load_dataset("json", data_files=data_args.train_file)
     elif data_args.dataset_name:
@@ -60,7 +60,10 @@ def generate_alpaca_lora_dataset(data_args, tokenizer):
     else: 
         assert data_args.dataset_name or data_args.train_file, "dataset_name or train_file need to be defined"
 
-    train_data = data["train"].shuffle().map(generate_and_tokenize_prompt, fn_kwargs={'tokenizer': tokenizer})
+    train_data = data["train"].map(generate_and_tokenize_prompt, fn_kwargs={'tokenizer': tokenizer}).remove_columns(data["train"].column_names)
+
+    if shuffle:
+        train_data = train_data.shuffle()
     val_data = None
 
     return train_data, val_data

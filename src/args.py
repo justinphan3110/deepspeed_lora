@@ -6,6 +6,9 @@ import transformers
 @dataclass
 class ModelArguments:
     model_name_or_path: Optional[str] = field(default="decapoda-research/llama-7b-hf")
+    adapter_name_or_path: str = field (
+        default=None, metadata={"help": "Adapater name"}
+    )
 
 
 @dataclass
@@ -93,8 +96,6 @@ class TrainingArguments(transformers.TrainingArguments):
     grouped_to_max_length: bool = field (
         default=False, metadata={"help": "Group to chunks of max length for pretraining"}
     )
-    adapter_name_or_path: str = field (
-        default=None, metadata={"help": "Adapater name"}
-    )
+
 
 
