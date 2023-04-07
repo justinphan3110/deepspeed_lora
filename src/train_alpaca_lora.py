@@ -26,7 +26,7 @@ from peft import (
     set_peft_model_state_dict,
 )
 
-from alpaca_lora.dataset_utils import generate_alpaca_lora_dataset
+from .alpaca_lora.dataset_utils import generate_alpaca_lora_dataset
 
 DEFAULT_PAD_TOKEN = "[PAD]"
 DEFAULT_EOS_TOKEN = "</s>"
