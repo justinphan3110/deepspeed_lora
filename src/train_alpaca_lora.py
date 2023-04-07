@@ -71,9 +71,12 @@ def train():
     # Set seed before initializing model.
     set_seed(training_args.seed)
 
+    device_map = "auto"
+
     model = transformers.AutoModelForCausalLM.from_pretrained(
         model_args.model_name_or_path,
         cache_dir=training_args.cache_dir,
+        device_map=device_map,
     )
 
     tokenizer = transformers.AutoTokenizer.from_pretrained(
