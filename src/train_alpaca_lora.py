@@ -98,7 +98,7 @@ def train():
             }
         )
 
-    train_dataset, eval_dataset = generate_alpaca_lora_dataset(data_args)
+    train_dataset, eval_dataset = generate_alpaca_lora_dataset(data_args, tokenizer)
     print("Train Samples: ", len(train_dataset))
 
     config = LoraConfig(

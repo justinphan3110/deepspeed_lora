@@ -6,9 +6,9 @@ export M=llama-7b
 export LR=3e-4
 
 srun --nodes=1 --gpus-per-node=3 deepspeed ../src/train_alpaca_lora.py \
-    --model_name_or_path /data/private_models/cais_models/llama/llama_hf_weights/${M} \
+    --model_name_or_path /data/private_models/cais_models/llama/llama_hf_weights/llama-7b \
     --train_file ../data/test_alpaca.json \
-    --output_dir out/new_alpaca_${M} \
+    --output_dir out/new_alpaca_7b \
     --num_train_epochs 10 \
     --per_device_train_batch_size 8 \
     --per_device_eval_batch_size 4 \
@@ -16,7 +16,7 @@ srun --nodes=1 --gpus-per-node=3 deepspeed ../src/train_alpaca_lora.py \
     --save_strategy "no" \
     --fp16 \
     --save_total_limit 1 \
-    --learning_rate ${LR} \
+    --learning_rate 3e-4 \
     --logging_steps 10 \
     --deepspeed ../configs/ds.json \
     --lr_scheduler_type "cosine" \
