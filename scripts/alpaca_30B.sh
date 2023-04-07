@@ -18,5 +18,6 @@ srun --nodes=2 --gpus-per-node=8 deepspeed ../src/train_alpaca_lora.py \
     --logging_steps 10 \
     --deepspeed ../configs/ds_zero3.json \
     --lr_scheduler_type "cosine" \
+    --gradient_checkpointing \
     --tf32 True \
-    --report_to tensorboard
+    --report_to tensorboard 
