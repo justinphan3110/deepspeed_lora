@@ -156,7 +156,7 @@ def train():
         model = torch.compile(model)
 
 
-    trainer.train(resume_from_checkpoint=resume_from_checkpoint)
+    trainer.train(resume_from_checkpoint=training_args.resume_from_checkpoint)
     trainer.save_pretrained(training_args.output_dir)
     
     # safe_save_model_for_hf_trainer(trainer=trainer, output_dir=training_args.output_dir)
