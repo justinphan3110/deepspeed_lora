@@ -25,7 +25,7 @@ def tokenize(prompt, tokenizer, cutoff_len=512, add_eos_token=True):
     return result
 
 def generate_and_tokenize_prompt(data_point, tokenizer, train_on_inputs=True, prompt_template_name="alpaca"):
-    prompter = Prompter(prompt_template_name)
+    prompter = Prompter()
     tokenizer.pad_token_id = (
     0  # unk. we want this to be different from the eos token   
     )
