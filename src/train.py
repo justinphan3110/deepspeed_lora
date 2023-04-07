@@ -10,7 +10,7 @@ from transformers import (
     set_seed,
 )
 
-from src.dataset_utils import (
+from dataset_utils import (
     make_raw_dataset,
     make_tokenized_dataset, 
     make_grouped_dataset, 
@@ -20,7 +20,7 @@ from src.dataset_utils import (
     get_resume_checkpoint_or_None
 )
 
-from src.args import (
+from args import (
     ModelArguments,
     DataTrainingArguments,
     TrainingArguments

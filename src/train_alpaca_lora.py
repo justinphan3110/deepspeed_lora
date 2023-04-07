@@ -2,7 +2,7 @@ import copy
 import logging
 import os
 from dataclasses import dataclass, field
-from typing import Optional, Dict, Sequence
+from typing import Dict
 import torch
 import sys
 
@@ -71,6 +71,7 @@ def train():
     # Set seed before initializing model.
     set_seed(training_args.seed)
 
+    # TODO: zero3 can't go with ddp so need to conditional check
     # device_map = "auto"
     # world_size = int(os.environ.get("WORLD_SIZE", 1))
     # print("WORLD_SIZE", world_size)

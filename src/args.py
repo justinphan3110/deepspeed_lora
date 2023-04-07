@@ -93,4 +93,8 @@ class TrainingArguments(transformers.TrainingArguments):
     grouped_to_max_length: bool = field (
         default=False, metadata={"help": "Group to chunks of max length for pretraining"}
     )
+    adapter_name_or_path: str = field (
+        default=None, metadata={"help": "Adapater name"}
+    )
+
 
