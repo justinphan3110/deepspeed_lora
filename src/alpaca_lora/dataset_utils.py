@@ -24,7 +24,7 @@ def tokenize(prompt, tokenizer, cutoff_len=512, add_eos_token=True):
 
     return result
 
-def generate_and_tokenize_prompt(data_point, tokenizer, train_on_inputs=True, prompt_template_name="alpaca"):
+def generate_and_tokenize_prompt(data_point, tokenizer, train_on_inputs=True, predict_dataset=False):
     prompter = Prompter()
     tokenizer.pad_token_id = (
     0  # unk. we want this to be different from the eos token   
@@ -34,7 +34,7 @@ def generate_and_tokenize_prompt(data_point, tokenizer, train_on_inputs=True, pr
     full_prompt = prompter.generate_prompt(
         data_point["instruction"],
         data_point["input"],
-        data_point["output"],
+        data_point["output"] if not predict_dataset else None,
     )
     tokenized_full_prompt = tokenize(full_prompt, tokenizer)
     if not train_on_inputs:
@@ -52,7 +52,7 @@ def generate_and_tokenize_prompt(data_point, tokenizer, train_on_inputs=True, pr
     return tokenized_full_prompt
 
 
-def generate_alpaca_lora_dataset(data_args, tokenizer, shuffle=True):
+def generate_alpaca_lora_dataset(data_args, tokenizer, shuffle=True, predict_dataset=False):
     if data_args.train_file and (data_args.train_file.endswith(".json") or data_args.train_file.endswith(".jsonl")):
         data = load_dataset("json", data_files=data_args.train_file)
     elif data_args.dataset_name:
@@ -60,7 +60,7 @@ def generate_alpaca_lora_dataset(data_args, tokenizer, shuffle=True):
     else: 
         assert data_args.dataset_name or data_args.train_file, "dataset_name or train_file need to be defined"
 
-    train_data = data["train"].map(generate_and_tokenize_prompt, fn_kwargs={'tokenizer': tokenizer}).remove_columns(data["train"].column_names)
+    train_data = data["train"].map(generate_and_tokenize_prompt, fn_kwargs={'tokenizer': tokenizer, "predict_dataset": predict_dataset}).remove_columns(data["train"].column_names)
 
     if shuffle:
         train_data = train_data.shuffle()
