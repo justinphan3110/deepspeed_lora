@@ -119,6 +119,7 @@ def train():
         bias="none",
         task_type="CAUSAL_LM",
     )
+    model.enable_input_require_grads()
     model = get_peft_model(model, config)
 
     if training_args.resume_from_checkpoint:
