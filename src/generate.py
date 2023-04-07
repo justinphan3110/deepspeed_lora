@@ -57,7 +57,7 @@ def smart_tokenizer_and_embedding_resize(
 set_seed(0)
 def main():
     parser = transformers.HfArgumentParser((ModelArguments, DataTrainingArguments, TrainingArguments))
-    model_args, data_args, _ = parser.parse_args_into_dataclasses()
+    model_args, data_args, train_args = parser.parse_args_into_dataclasses()
     
     model_name = model_args.model_name_or_path
     adapter_name = model_args.adapter_name_or_path
@@ -101,7 +101,7 @@ def main():
         processed_datasets, _ = generate_alpaca_lora_dataset(data_args, tokenizer, shuffle=False)
     accelerator.wait_for_everyone()
 
-    batch_size = 8
+    batch_size = train_args.per_device_predict_batch_size
     data_collator = DataCollatorForSeq2Seq(tokenizer, model)
     dataloader = DataLoader(
         processed_datasets, shuffle=False, collate_fn=data_collator, batch_size=batch_size, pin_memory=True

@@ -96,6 +96,10 @@ class TrainingArguments(transformers.TrainingArguments):
     grouped_to_max_length: bool = field (
         default=False, metadata={"help": "Group to chunks of max length for pretraining"}
     )
+    per_device_predict_batch_size: int = field (
+        default=4,
+        metadata={"help": "Predict Batch Size"}
+    )
 
 
 
