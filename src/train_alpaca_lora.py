@@ -72,6 +72,11 @@ def train():
     set_seed(training_args.seed)
 
     device_map = "auto"
+    world_size = int(os.environ.get("WORLD_SIZE", 1))
+    print("WORLD_SIZE", world_size)
+    ddp = world_size != 1
+    if ddp:
+        device_map = {"": int(os.environ.get("LOCAL_RANK") or 0)}
 
     model = transformers.AutoModelForCausalLM.from_pretrained(
         model_args.model_name_or_path,
