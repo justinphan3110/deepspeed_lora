@@ -81,7 +81,7 @@ def train():
     model = transformers.AutoModelForCausalLM.from_pretrained(
         model_args.model_name_or_path,
         cache_dir=training_args.cache_dir,
-        load_in_8bit=True,
+        # load_in_8bit=True,
         device_map=device_map,
     )
 
@@ -107,7 +107,7 @@ def train():
             }
         )
 
-    model = prepare_model_for_int8_training(model, layer_norm_names=[])
+    # model = prepare_model_for_int8_training(model, layer_norm_names=[])
     train_dataset, eval_dataset = generate_alpaca_lora_dataset(data_args, tokenizer)
     print("Train Samples: ", len(train_dataset))
 
