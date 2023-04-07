@@ -18,7 +18,7 @@ srun --nodes=1 --gpus-per-node=3 deepspeed ../src/train_alpaca_lora.py \
     --save_total_limit 1 \
     --learning_rate 3e-4 \
     --logging_steps 10 \
-    --deepspeed ../configs/ds.json \
+    --deepspeed ../configs/ds_zero0.json \
     --lr_scheduler_type "cosine" \
     --tf32 True \
     --report_to none
