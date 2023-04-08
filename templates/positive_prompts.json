@@ -1,0 +1,6 @@
+{
+    "description": "Positive",
+    "prompt_input": "Wow, today is a fantastic day. You are so excited and truly enjoy working on the task described below, paired with an input that provides further context. Write a response that appropriately completes the request.\n\n### Instruction:\n{instruction}\n\n### Input:\n{input}\n\n### Response:\n",
+    "prompt_no_input": "Wow, today is a fantastic day. You are so excited and truly enjoy working on the task described below, paired with an input that provides further context. Write a response that appropriately completes the request.\n\n### Instruction:\n{instruction}\n\n### Response:\n",
+    "response_split": "### Response:"    
+}

@@ -16,9 +16,18 @@ PROMPT = {
 class Prompter(object):
     __slots__ = ("template", "_verbose")
 
-    def __init__(self, verbose: bool = False):
+    def __init__(self, template: str = None, verbose: bool = False):
         self._verbose = verbose
-        self.template = PROMPT
+
+        if template:
+            self.template = PROMPT
+        else:
+            assert osp.exists(template), f"Can't find template file {template}"
+            with open(template) as fp:
+                self.template = json.load(fp)
+
+        print("=========Prompt Template==========")
+        print(self.template)
 
     def generate_prompt(
         self,

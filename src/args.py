@@ -73,6 +73,10 @@ class DataTrainingArguments:
     keep_linebreaks: bool = field(
         default=True, metadata={"help": "Whether to keep line breaks when using TXT files or not."}
     )
+    prompt_template: str = field(
+        default=False,  metadata={"help": "Prompt file for instruction following training, must be a json file"}
+    )
+
 
     def __post_init__(self):
         if self.dataset_name is None and self.train_file is None and self.validation_file is None:
@@ -95,10 +99,6 @@ class TrainingArguments(transformers.TrainingArguments):
     )
     grouped_to_max_length: bool = field (
         default=False, metadata={"help": "Group to chunks of max length for pretraining"}
-    )
-    per_device_predict_batch_size: int = field (
-        default=4,
-        metadata={"help": "Predict Batch Size"}
     )
 
 
