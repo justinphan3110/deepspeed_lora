@@ -60,11 +60,11 @@ def smart_tokenizer_and_embedding_resize(
 set_seed(0)
 def main(
     load_8bit: bool = False,
-    base_model: str = "../out/merged_hf_models/llama_alpaca_lora_7B/",
-    adapter_name: str = None,
+    model_name_or_path: str = "../out/merged_hf_models/llama_alpaca_lora_7B/",
+    adapter_name_or_path: str = None,
     prompt_template: str = "",  # The prompt template to use, will default to alpaca.
 ):
-    prompter = Prompter()
+    prompter = Prompter(prompt_template)
     device="cuda"
     # parser = transformers.HfArgumentParser((ModelArguments, DataTrainingArguments, TrainingArguments))
     # model_args, data_args, train_args = parser.parse_args_into_dataclasses()
@@ -73,30 +73,30 @@ def main(
     # adapter_name = model_args.adapter_name_or_path
     # accelerator = Accelerator()
 
-    print("Base Model", base_model)
+    print("Base Model", model_name_or_path)
     model = AutoModelForCausalLM.from_pretrained(
-            base_model,
+            model_name_or_path,
             load_in_8bit=load_8bit,
             torch_dtype=torch.float16,
             device_map="auto",
     )
 
-    if adapter_name:
-        print("PEFT Adapter", adapter_name) 
+    if adapter_name_or_path:
+        print("PEFT Adapter", adapter_name_or_path) 
         model = PeftModel.from_pretrained(
             model,
-            adapter_name,
+            adapter_name_or_path,
             torch_dtype=torch.float16,
         )
 
-    tokenizer = AutoTokenizer.from_pretrained(base_model)
+    tokenizer = AutoTokenizer.from_pretrained(model_name_or_path)
     if tokenizer.pad_token is None:
         smart_tokenizer_and_embedding_resize(
             special_tokens_dict=dict(pad_token=DEFAULT_PAD_TOKEN),
             tokenizer=tokenizer,
             model=model,
         )
-    if "llama" in base_model:
+    if "llama" in model_name_or_path:
         tokenizer.add_special_tokens(
             {
                 "eos_token": DEFAULT_EOS_TOKEN,
@@ -116,7 +116,6 @@ def main(
         top_k=40,
         num_beams=4,
         max_new_tokens=128,
-        stream_output=False,
         **kwargs,
     ):
         prompt = prompter.generate_prompt(instruction, input)

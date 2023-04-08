@@ -11,7 +11,7 @@ srun --nodes=1 --gpus-per-node=3 deepspeed ../src/train_alpaca_lora.py \
     --output_dir ../out/happy_prompts/llama_positive_alpaca_lora_7b \
     --prompt_template ../templates/positive_prompts.json \
     --num_train_epochs 10 \
-    --per_device_train_batch_size 16 \
+    --per_device_train_batch_size 8 \
     --per_device_eval_batch_size 4 \
     --evaluation_strategy "no" \
     --save_strategy "no" \

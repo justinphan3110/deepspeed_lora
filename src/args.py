@@ -74,7 +74,7 @@ class DataTrainingArguments:
         default=True, metadata={"help": "Whether to keep line breaks when using TXT files or not."}
     )
     prompt_template: str = field(
-        default=False,  metadata={"help": "Prompt file for instruction following training, must be a json file"}
+        default=None,  metadata={"help": "Prompt file for instruction following training, must be a json file"}
     )
 
 
