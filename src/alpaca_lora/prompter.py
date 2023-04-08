@@ -19,10 +19,11 @@ class Prompter(object):
     def __init__(self, template: str = None, verbose: bool = False):
         self._verbose = verbose
 
-        if template:
+        if not template:
             self.template = PROMPT
         else:
             assert osp.exists(template), f"Can't find template file {template}"
+            print("Using template", template)
             with open(template) as fp:
                 self.template = json.load(fp)
 
