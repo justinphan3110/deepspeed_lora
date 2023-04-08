@@ -1,35 +1,22 @@
 # TODO: optimize code
-
-import os
 import fire
 
 import torch
 from accelerate import Accelerator
-from datasets import load_dataset
-from torch.utils.data import DataLoader
 from tqdm import tqdm
 from transformers import (
     AutoModelForCausalLM,
     AutoTokenizer,
     default_data_collator,
     set_seed,
-    DataCollatorForSeq2Seq,
-    GenerationConfig,
     
 )
 import numpy as np
 from typing import Dict
 
-from torchtracemalloc import TorchTracemalloc, b2mb
-from peft import LoraConfig, TaskType, get_peft_model, PeftModel
+from peft import PeftModel
 import transformers
-from args import (
-    ModelArguments,
-    DataTrainingArguments,
-    TrainingArguments,
-)
-from alpaca_lora.dataset_utils import generate_alpaca_lora_dataset
-from alpaca_lora.prompter import Prompter
+from ..src.alpaca_lora.prompter import Prompter
 from tqdm import tqdm
 from datasets import Dataset
 
