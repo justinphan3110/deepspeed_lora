@@ -108,6 +108,8 @@ def main(
     if not load_8bit:
         model.half()  # seems to fix bugs for some users.
 
+    model.eval()
+
     def evaluate(
         instruction,
         input=None,
